@@ -1,0 +1,31 @@
+image: registry.gitlab.com/yandex-courses/frontend/internal/software/viserion:1.1.0
+
+stages:
+  - deps
+  - test
+
+.commmon:
+  only:
+    variables:
+      - $UPSTREAM_PROJECT
+      - $UPSTREAM_BRANCH
+      - $UPSTREAM_REF
+
+install:
+  extends: .commmon
+  stage: deps
+  script:
+    - npm ci
+  artifacts:
+    paths:
+      - node_modules/
+
+test:
+  extends: .commmon
+  stage: test
+  dependencies:
+    - install
+  script:
+    - clone-solution
+    - create-report
+    - send-report
