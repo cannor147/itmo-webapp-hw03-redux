@@ -1,6 +1,6 @@
+import { Action, AnyAction, TCounterState } from '../src/types';
 import { actions, reducers, thunk } from '../src/helpers';
 import { applyMiddleware, createStore } from '../src/redux';
-import { Action } from '../src/types';
 
 describe('applyMiddleware', () => {
   it('warns when dispatching during middleware setup', () => {
@@ -10,7 +10,11 @@ describe('applyMiddleware', () => {
       return (next: any) => (action: Action) => next(action);
     }
 
-    expect(() => applyMiddleware(dispatchingMiddleware)(createStore)(reducers.counter)).toThrow();
+    expect(() =>
+      applyMiddleware<TCounterState, AnyAction>(dispatchingMiddleware)(createStore)(
+        reducers.counter
+      )
+    ).toThrow();
   });
 
   it('wraps dispatch method with middleware once', () => {
@@ -24,7 +28,9 @@ describe('applyMiddleware', () => {
 
     const spy = jest.fn();
 
-    const store = applyMiddleware(test(spy) as any)(createStore)(reducers.counter);
+    const store = applyMiddleware<TCounterState, AnyAction>(test(spy) as any)(createStore)(
+      reducers.counter
+    );
 
     store.dispatch(actions.increase());
     store.dispatch(actions.increase());
@@ -39,7 +45,7 @@ describe('applyMiddleware', () => {
 
   it('works with thunk middleware', () => {
     return new Promise(done => {
-      const store = applyMiddleware(thunk)(createStore)(reducers.counter);
+      const store = applyMiddleware<TCounterState, AnyAction>(thunk)(createStore)(reducers.counter);
 
       store.dispatch(actions.increase());
       store.dispatch(actions.increase());
@@ -67,7 +73,7 @@ describe('applyMiddleware', () => {
 
       const spy = jest.fn();
 
-      const storeCreator = applyMiddleware(test(spy), thunk)(createStore);
+      const storeCreator = applyMiddleware<TCounterState, AnyAction>(test(spy), thunk)(createStore);
 
       const store = storeCreator(reducers.counter);
 

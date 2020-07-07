@@ -322,9 +322,9 @@ describe('createStore', () => {
 
     expect(() => createStore(reducers.counter, undefined, undefined)).not.toThrow();
 
-    expect(() => createStore(reducers.counter, undefined, x => x)).not.toThrow();
+    expect(() => createStore(reducers.counter, undefined, ((x: any) => x) as any)).not.toThrow();
 
-    expect(() => createStore(reducers.counter, x => x)).not.toThrow();
+    expect(() => createStore(reducers.counter, ((x: any) => x) as any)).not.toThrow();
 
     expect(() => createStore(reducers.counter, { count: 0 })).not.toThrow();
 
